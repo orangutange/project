@@ -4,6 +4,7 @@
 main(){
     setUp
     dns
+    hosts
     initialize_script
     update_system
     remove_prohibited_software
@@ -44,7 +45,6 @@ generatePassword() {
 
 #DNS
 dns(){
-    hosts
     service network-manager restart
 }
 
