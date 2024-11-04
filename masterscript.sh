@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#EUREKA!!! POINTS!!!
+# EUREKA!!! POINTS!!!
 main(){
     setUp
     dns
@@ -390,7 +390,7 @@ configure_pam() {
         sed -i 's/^ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/' /etc/login.defs
         sed -i 's/^FAILLOG_ENAB.*/FAILLOG_ENAB yes/' /etc/login.defs
         sed -i 's/^PASS_MAX_TRIES.*/PASS_MAX_TRIES 3/' /etc/login.defs
-        sed -i 's/^PASS_MIN_LEN.*/PASS_MIN_MIN 12/' /etc/login.defs
+        sed -i 's/^PASS_MIN_LEN.*/PASS_MIN_LEN 12/' /etc/login.defs
 
 
 }
@@ -498,7 +498,7 @@ setup_firewall() {
 set_passwords_for_users() {
     echo "Setting passwords for authorized users..."
     for user in "${valid_users[@]}"; do
-        local new_password=$(generate_password)
+        local new_password=$(generatePassword)
         echo "Setting password for $user"
         echo "$user:$new_password" | sudo chpasswd
         echo "User: $user, New Password: $new_password" >> /tmp/passwords.txt
