@@ -241,11 +241,11 @@ criticalServices() {
             # Reload Apache to apply changes
             systemctl reload apache2
             
-                    else
+        else
             
-                        echo "No specific configuration set for $service."
-                    fi
-                done
+            echo "No specific configuration set for $service."
+        fi
+    done
 }
 
 
