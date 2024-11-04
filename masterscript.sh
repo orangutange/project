@@ -135,7 +135,7 @@ criticalServices() {
             # Restart Samba to apply changes
             systemctl restart smbd
             echo "Samba has been configured."
-        elif [[ "$service" == "vsftpd" ]]; then
+        #elif [[ "$service" == "vsftpd" ]]; then
 
         elif [[ "$service" == "apache" ]]; then
             sudo apt install apache -y
