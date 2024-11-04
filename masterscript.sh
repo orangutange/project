@@ -1,25 +1,42 @@
 #!/bin/bash
+
+#EUREKA!!! POINTS!!!
 main(){
     setUp
     dns
+    initialize_script
+    update_system
+    remove_prohibited_software
+    setup_firewall
+    configure_sudo_users
+    remove_unauthorized_users
+    set_passwords_for_users
+    configure_sysctl
+    criticalServices
+    configure_pam
+    filePriviledges
+    check_and_repair_binary_poisoning
+    remove_rootkits_malware
+    locate_prohibited_files
 }
-
+# Setting up the system for script execution
 setUp(){
     checkPrivilege
     saveLogs
 }
- 
+# Checks for root priviledges
 checkPrivilege() {
     if [[ $EUID -ne 0 ]]; then
       echo "This script must be run as root."
       exit 1
     fi
 }
-
+# Saves a log of the log directory
 saveLogs(){
     cp -r /var/log varLogBackups
 }
 
+#
 generatePassword() {
     local password=$(tr -dc 'a-zA-Z0-9!@#$%^&*()-_+=<>?' < /dev/urandom | head -c 20)
     echo "$password"
@@ -240,9 +257,7 @@ criticalServices() {
             
             # Reload Apache to apply changes
             systemctl reload apache2
-            
         else
-            
             echo "No specific configuration set for $service."
         fi
     done
@@ -497,34 +512,6 @@ initialize_script() {
     sudo chmod +r /usr/bin/*
     echo "System initialized."
 }
-# Function to secure file permissions for critical system files
-secure_file_permissions() {
-    echo "Securing file permissions..."
-
-    # Set permissions for /etc/passwd, /etc/group, /etc/shadow, .bash_history
-    chmod 644 /etc/passwd
-    chmod 644 /etc/group
-    chmod 600 /etc/shadow
-    chmod 640 ~/.bash_history
-    chmod 644 /etc/hosts
-
-    # Additional files and directories to secure
-    chmod 600 /etc/gshadow
-    chmod 644 /etc/hosts
-    chmod 644 /etc/host.conf
-    chmod 644 /etc/lightdm/lightdm.conf
-    chmod 644 /etc/gdm3/custom.conf
-    chmod 644 /etc/hostname
-    chmod 600 /etc/ssh/ssh_host_*_key
-    chmod 644 /etc/ssh/ssh_host_*_key.pub
-
-    # Secure sudoers file if it exists
-    if [ -f /etc/sudoers ]; then
-        chmod 440 /etc/sudoers
-    fi
-
-    echo "File permissions secured."
-}
 
 # Function to check for binary poisoning and repair compromised packages
 check_and_repair_binary_poisoning() {
@@ -566,6 +553,7 @@ filePriviledges(){
 }
 
 # Main script
+main
 
 # Prompt for user input
 read -p "Enter the critical services (separated by space): " -a critical_services
@@ -575,21 +563,6 @@ read -p "Enter the valid sudo users (separated by space): " -a valid_sudo_users
 # Define valid software (critical services)
 valid_software=("${critical_services[@]}")
 
-# Function calls
-initialize_script
-update_system
-remove_prohibited_software
-setup_firewall
-configure_sudo_users
-remove_unauthorized_users
-set_passwords_for_users
-configure_sysctl
-criticalServices
-configure_pam
-secure_file_permissions
-check_and_repair_binary_poisoning
-remove_rootkits_malware
-locate_prohibited_files
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
 echo "Prohibited files located in /tmp/prohibited_files.txt."
