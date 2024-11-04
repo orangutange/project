@@ -552,9 +552,6 @@ filePriviledges(){
     bash helperScripts/permissions.sh
 }
 
-# Main script
-main
-
 # Prompt for user input
 read -p "Enter the critical services (separated by space): " -a critical_services
 read -p "Enter the valid users from the README (separated by space): " -a valid_users
@@ -562,6 +559,9 @@ read -p "Enter the valid sudo users (separated by space): " -a valid_sudo_users
 
 # Define valid software (critical services)
 valid_software=("${critical_services[@]}")
+
+# Main script
+main
 
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
