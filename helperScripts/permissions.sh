@@ -1,3 +1,6 @@
+# Set permissions for /etc/passwd, /etc/group, /etc/shadow, .bash_history
+echo "Securing file permissions..."
+
 chmod 755 /etc/resolvconf/resolv.conf.d/
 chmod 644 /etc/resolvconf/resolv.conf.d/base
 chmod 777 /etc/resolv.conf
@@ -21,7 +24,6 @@ chmod 644 /etc/group
 chmod 640 /etc/gshadow
 chmod 755 /etc/sudoers.d/
 chmod 440 /etc/sudoers.d/*
-chmod 440 /etc/sudoers
 chmod 644 /etc/deluser.conf
 chmod 644 /etc/adduser.conf
 chmod 644 /etc/login.defs
@@ -113,3 +115,20 @@ chown root:root /sys
 chown root:root /tmp
 chown root:root /usr
 chown root:root /var/
+chmod 600 /etc/shadow
+chmod 640 ~/.bash_history
+
+# Additional files and directories to secure
+chmod 600 /etc/gshadow
+chmod 644 /etc/lightdm/lightdm.conf
+chmod 644 /etc/gdm3/custom.conf
+chmod 644 /etc/hostname
+chmod 600 /etc/ssh/ssh_host_*_key
+chmod 644 /etc/ssh/ssh_host_*_key.pub
+
+# Secure sudoers file if it exists
+if [ -f /etc/sudoers ]; then
+    chmod 440 /etc/sudoers
+fi
+
+echo "File permissions secured."
