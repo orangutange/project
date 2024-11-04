@@ -3,7 +3,6 @@
 # EUREKA!!! POINTS!!!
 main(){
     setUp
-    dns
     # hosts needs work
     initialize_script
     update_system
