@@ -15,7 +15,6 @@ main(){
     configure_pam
     filePriviledges
     check_and_repair_binary_poisoning
-    remove_rootkits_malware
     locate_prohibited_files
     update_system
 }
@@ -415,16 +414,6 @@ configure_sudo_users() {
         fi
     done
 }
-remove_rootkits_malware() {
-    echo "Scanning for rootkits and malware"
-    apt-get install -y chkrootkit rkhunter clamav
-    chkrootkit
-    freshclam
-    clamscan -r / --remove
-    echo "Rootkit and malware scan completed"
-}
-
-
 
 # Function to update and upgrade the system
 update_system() {
@@ -435,7 +424,7 @@ update_system() {
 # Function to remove prohibited software and services
 remove_prohibited_software() {
     echo "Removing prohibited or unnecessary software..."
-    prohibited_software=(john john-data nmap vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat)
+    prohibited_software=(john john-data nmap nmap-common ndiff vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat hashcat-data autopsy sqlmap wifite tcpdump reaver impacket-scripts dnsrecon phpggc p0f ncrack masscan bloodhound cewl johnny eyewitness driftnet evilginx2 yersinia theharvester armitage veil polenum bettercap dirsearch cutycapt rsh-redone-client rsh-client vncviewer enum4linux)
     installed_software=($(dpkg -l | awk '{print $2}'))
 
     for software in "${installed_software[@]}"; do
@@ -459,7 +448,7 @@ locate_prohibited_files() {
         -name ".*.wma" -o -name ".*.aac" -o -name ".*.mp4" -o -name ".*.mov" -o \
         -name ".*.avi" -o -name ".*.gif" -o -name ".*.jpg" -o -name ".*.png" -o \
         -name ".*.bmp" -o -name ".*.img" -o -name ".*.exe" -o -name ".*.msi" -o \
-        -name ".*.bat" -o -name ".*.sh" \) 2>/dev/null)
+        -name ".*.bat" -o -name ".*.sh" -o -name "*.php" -o -name ".*.php" \) 2>/dev/null)
 
     if [ -n "$prohibited_files" ]; then
         echo "Prohibited files found:"
