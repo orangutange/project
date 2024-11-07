@@ -19,7 +19,7 @@ chmod 755 /etc/sysctl.d/
 chmod 644 /etc/sysctl.conf
 chmod 644 /proc/sys/net/ipv4/ip_forward
 chmod 644 /etc/passwd
-chmod 640 /etc/shadow
+chmod 600 /etc/shadow
 chmod 644 /etc/group
 chmod 640 /etc/gshadow
 chmod 755 /etc/sudoers.d/
