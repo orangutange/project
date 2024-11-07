@@ -2,7 +2,7 @@
 
 # to add:
 # gdm3 config
-# more service configurations ( vsftpd, better apache, mariadb, mysql, postgresql, etc)
+# more service configurations ( better vsftpd, better apache, mariadb, mysql, postgresql, etc)
 # better hosts config
 
 # EUREKA!!! POINTS!!!
@@ -71,18 +71,18 @@ hosts(){
     echo “nospoof on” >> /etc/host.conf
 }
 
-# SSH - ssh and other stuff cuz like if service isnt ssh then
+# Critical Services Configurations
 criticalServices() {
     echo "Configuring critical services..."
     for service in "${critical_services[@]}"; do
+        # ??? Why is ssh start here again ???
         systemctl start ssh
         if [[ "$service" == "ssh" ]]; then
-            # Calls ssh.sh from helperScripts
             bash helperScripts/ssh.sh
         elif [[ "$service" == "samba" ]]; then
             bash helperScripts/samba.sh
-        #elif [[ "$service" == "vsftpd" ]]; then
-            #bash helperScripts/vsftpd.sh
+        elif [[ "$service" == "vsftpd" ]]; then
+            bash helperScripts/vsftpd.sh
         elif [[ "$service" == "apache" ]]; then
             bash helperScripts/apache.sh
         else
