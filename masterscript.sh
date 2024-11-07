@@ -440,7 +440,7 @@ update_system() {
 # Function to remove prohibited software and services
 remove_prohibited_software() {
     echo "Removing prohibited or unnecessary software..."
-    prohibited_software=(john john-data nmap vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver)
+    prohibited_software=(john john-data nmap vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat)
     installed_software=($(dpkg -l | awk '{print $2}'))
 
     for software in "${installed_software[@]}"; do
@@ -556,6 +556,8 @@ valid_software=("${critical_services[@]}")
 
 # Main script
 main
+
+echo $password
 
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
