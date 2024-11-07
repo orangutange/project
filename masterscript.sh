@@ -14,7 +14,6 @@ main(){
     criticalServices
     configure_pam
     filePriviledges
-    check_and_repair_binary_poisoning
     locate_prohibited_files
     update_system
 }
@@ -258,89 +257,9 @@ configure_sysctl() {
 
     # Backup the current sysctl.conf
     cp /etc/sysctl.conf /etc/sysctl.conf.bak
+    
+    curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf && sysctl -p
 
-    # Apply the provided sysctl configurations
-    cat <<EOT >> /etc/sysctl.conf
-# Kernel sysctl configuration
-kernel.sysrq = 0
-kernel.core_uses_pid = 1
-kernel.pid_max = 65535
-kernel.maps_protect = 1
-kernel.exec-shield = 1
-kernel.randomize_va_space = 2
-kernel.msgmnb = 65535
-kernel.msgmax = 65535
-fs.suid_dumpable = 0
-kernel.kptr_restrict = 1
-fs.file-max = 209708
-vm.swappiness = 30
-vm.dirty_ratio = 30
-vm.dirty_background_ratio = 5
-vm.mmap_min_addr = 4096
-vm.overcommit_ratio = 50
-vm.overcommit_memory = 0
-kernel.shmmax = 268435456
-kernel.shmall = 268435456
-vm.min_free_kbytes = 65535
-net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_syn_retries = 2
-net.ipv4.tcp_synack_retries = 2
-net.ipv4.tcp_max_syn_backlog = 4096
-net.ipv4.ip_forward = 0
-net.ipv4.conf.all.forwarding = 0
-net.ipv4.conf.default.forwarding = 0
-net.ipv6.conf.all.forwarding = 0
-net.ipv6.conf.default.forwarding = 0
-net.ipv4.conf.all.send_redirects = 0
-net.ipv4.conf.default.send_redirects = 0
-net.ipv4.conf.all.accept_source_route = 0
-net.ipv4.conf.default.accept_source_route = 0
-net.ipv6.conf.all.accept_source_route = 0
-net.ipv6.conf.default.accept_source_route = 0
-net.ipv4.conf.all.rp_filter = 1
-net.ipv4.conf.default.rp_filter = 1
-net.ipv4.conf.all.accept_redirects = 0
-net.ipv4.conf.default.accept_redirects = 0
-net.ipv4.conf.all.secure_redirects = 0
-net.ipv4.conf.default.secure_redirects = 0
-net.ipv6.conf.all.accept_redirects = 0
-net.ipv6.conf.default.accept_redirects = 0
-net.ipv4.conf.all.log_martians = 1
-net.ipv4.conf.default.log_martians = 1
-net.ipv4.tcp_fin_timeout = 7
-net.ipv4.tcp_keepalive_time = 300
-net.ipv4.tcp_keepalive_probes = 5
-net.ipv4.tcp_keepalive_intvl = 15
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-net.ipv4.icmp_ignore_bogus_error_responses = 1
-net.ipv4.ip_local_port_range = 16384 65535
-net.ipv4.tcp_rfc1337 = 1
-net.ipv6.conf.all.autoconf=0
-net.ipv6.conf.all.accept_ra=0
-net.core.default_qdisc = fq
-net.ipv4.tcp_congestion_control = bbr
-net.ipv4.tcp_rmem = 8192 87380 16777216
-net.ipv4.udp_rmem_min = 16384
-net.core.rmem_default = 262144
-net.core.rmem_max = 16777216
-net.ipv4.tcp_wmem = 8192 65536 16777216
-net.ipv4.udp_wmem_min = 16384
-net.core.wmem_default = 262144
-net.core.wmem_max = 16777216
-net.core.somaxconn = 32768
-net.core.netdev_max_backlog = 16384
-net.core.optmem_max = 65535
-net.ipv4.tcp_max_tw_buckets = 1440000
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_tw_recycle = 0
-net.ipv4.tcp_max_orphans = 16384
-net.ipv4.tcp_no_metrics_save = 1
-net.ipv4.tcp_moderate_rcvbuf = 1
-net.ipv4.route.flush = 1
-net.ipv6.route.flush = 1
-EOT
-
-    # Apply the new sysctl settings
     sysctl -p /etc/sysctl.conf
 }
 
@@ -418,7 +337,19 @@ configure_sudo_users() {
 # Function to update and upgrade the system
 update_system() {
     echo "Updating and upgrading the system..."
-    sudo apt-get update -y && sudo apt-get upgrade -y
+    sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
+    read -p "Do you want to reboot the system to apply kernel updates? (yes/no): " answer
+    if [[ "$answer" == "yes" ]]; then
+        echo "Rebooting the system..."
+        sudo reboot
+    elif [[ "$answer" == "no" ]]; then
+        echo "No reboot will be performed. Exiting script."
+        exit 0
+    else
+        echo "Invalid input. Please answer with 'yes' or 'no'."
+        exit 1
+    fi    
+    
 }
 
 # Function to remove prohibited software and services
@@ -467,6 +398,7 @@ setup_firewall() {
     fi
     sudo ufw reset
     sudo ufw enable
+    sudo ufw deny incoming
     for service in "${critical_services[@]}"; do
         sudo ufw allow "$service"
     done
@@ -508,8 +440,7 @@ valid_software=("${critical_services[@]}")
 # Main script
 main
 
-echo $password
+echo "$password"
 
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
-echo "Prohibited files located in /tmp/prohibited_files.txt."
