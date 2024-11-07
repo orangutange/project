@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# to add:
+# gdm3 config
+# more service configurations ( vsftpd, better apache, mariadb, mysql, postgresql, etc)
+# better hosts config
+
 # EUREKA!!! POINTS!!!
 main(){
     setUp
@@ -79,14 +84,14 @@ criticalServices() {
         elif [[ "$service" == "samba" ]]; then
             echo "Configuring Samba..."
             apt-get install -y samba
-        apt-get -y install system-config-samba
+            apt-get -y install system-config-samba
                 
-                systemctl start smbd
+            systemctl start smbd
             smb_conf="/etc/samba/smb.conf"
-        ufw allow netbios-ns
-        ufw allow netbios-dgm
-        ufw allow netbios-ssn
-        ufw allow microsoft-ds
+            ufw allow netbios-ns
+            ufw allow netbios-dgm
+            ufw allow netbios-ssn
+            ufw allow microsoft-ds
 
             # Add the required configurations to the Samba global section
             echo "disable netbios = Yes" >> $smb_conf
@@ -338,11 +343,11 @@ configure_sudo_users() {
 update_system() {
     echo "Updating and upgrading the system..."
     sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
-    read -p "Do you want to reboot the system to apply kernel updates? (yes/no): " answer
-    if [[ "$answer" == "yes" ]]; then
+    read -p "Do you want to reboot the system to apply kernel updates? (y/n): " answer
+    if [[ "$answer" == "y" ]]; then
         echo "Rebooting the system..."
         sudo reboot
-    elif [[ "$answer" == "no" ]]; then
+    elif [[ "$answer" == "n" ]]; then
         echo "No reboot will be performed. Exiting script."
         exit 0
     else
@@ -355,7 +360,7 @@ update_system() {
 # Function to remove prohibited software and services
 remove_prohibited_software() {
     echo "Removing prohibited or unnecessary software..."
-    prohibited_software=(john john-data nmap nmap-common ndiff vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat hashcat-data autopsy sqlmap wifite tcpdump reaver impacket-scripts dnsrecon phpggc p0f ncrack masscan bloodhound cewl johnny eyewitness driftnet evilginx2 yersinia theharvester armitage veil polenum bettercap dirsearch dirbuster legion cutycapt rsh-redone-client rsh-client vncviewer enum4linux dmitry)
+    prohibited_software=(john john-data nmap nmap-common ndiff vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat hashcat-data autopsy sqlmap wifite wifiphisher spiderfoot ffuf tcpdump reaver impacket-scripts dnsrecon phpggc p0f ncrack masscan bloodhound cewl johnny eyewitness driftnet evilginx2 yersinia theharvester armitage veil polenum bettercap dirsearch dirbuster legion cutycapt rsh-redone-client gobuster havoc rsh-client vncviewer enum4linux dmitry snort snort-common snort-common-libraries snort-doc snort-rules-default wfuzz )
     installed_software=($(dpkg -l | awk '{print $2}'))
 
     for software in "${installed_software[@]}"; do
@@ -379,7 +384,7 @@ locate_prohibited_files() {
         -name ".*.wma" -o -name ".*.aac" -o -name ".*.mp4" -o -name ".*.mov" -o \
         -name ".*.avi" -o -name ".*.gif" -o -name ".*.jpg" -o -name ".*.png" -o \
         -name ".*.bmp" -o -name ".*.img" -o -name ".*.exe" -o -name ".*.msi" -o \
-        -name ".*.bat" -o -name ".*.sh" -o -name "*.php" -o -name ".*.php" \) 2>/dev/null)
+        -name ".*.bat" -o -name ".*.sh" -o -name ".*.so" -o -name "*.php" -o -name ".*.php" \) 2>/dev/null)
 
     if [ -n "$prohibited_files" ]; then
         echo "Prohibited files found:"
@@ -420,6 +425,7 @@ initialize_script() {
     echo "Initializing script..."
     sudo chmod +x /usr/bin/*
     sudo chmod +r /usr/bin/*
+    sudo apt install apparmor-profiles
     echo "System initialized."
 }
 
