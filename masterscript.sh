@@ -491,39 +491,6 @@ initialize_script() {
     echo "System initialized."
 }
 
-# Function to check for binary poisoning and repair compromised packages
-check_and_repair_binary_poisoning() {
-    echo "Checking for binary poisoning using debsums..."
-
-    # Ensure debsums is installed
-    if ! command -v debsums &> /dev/null; then
-        echo "debsums not found. Installing debsums..."
-        apt-get update && apt-get install -y debsums
-    fi
-
-    # Run debsums to check for modified binaries
-    poisoned_files=$(debsums -s)
-
-    # If there are modified files, print them and provide options
-    if [ -n "$poisoned_files" ]; then
-        echo "Binary poisoning detected. Modified files:"
-        echo "$poisoned_files"
-        
-        echo "Attempting to repair compromised packages..."
-        
-        # Extract package names from debsums output and reinstall them
-        for package in $(echo "$poisoned_files" | awk '{print $1}' | xargs dpkg -S | cut -d: -f1 | sort -u); do
-            echo "Reinstalling package: $package"
-            apt-get install --reinstall -y "$package"
-        done
-
-        echo "Repair process completed. Re-running debsums for verification..."
-        debsums -s && echo "All binaries verified successfully." || echo "Some issues may still be present."
-    else
-        echo "No binary poisoning detected. All binaries are intact."
-    fi
-}
-
 #Checks for the correct file permissions of default files
 filePriviledges(){
     df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
