@@ -22,7 +22,6 @@ main(){
 # Setting up the system for script execution
 setUp(){
     checkPrivilege
-    saveLogs
 }
 # Checks for root priviledges
 checkPrivilege() {
@@ -30,10 +29,6 @@ checkPrivilege() {
       echo "This script must be run as root."
       exit 1
     fi
-}
-# Saves a log of the log directory
-saveLogs(){
-    cp -r /var/log varLogBackups
 }
 
 #
