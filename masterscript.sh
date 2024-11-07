@@ -5,26 +5,24 @@
 # more service configurations ( vsftpd, better apache, mariadb, mysql, postgresql, etc)
 # better hosts config
 
+# CRITICAL SERVICES NEEDS TO BE SUBDIVIDED!!!
+
 # EUREKA!!! POINTS!!!
 main(){
-    setUp
-    # hosts needs work
-    initialize_script
-    remove_prohibited_software
-    setup_firewall
-    configure_sudo_users
-    remove_unauthorized_users
-    set_passwords_for_users
-    configure_sysctl
-    criticalServices
-    configure_pam
-    filePriviledges
-    locate_prohibited_files
-    update_system
-}
-# Setting up the system for script execution
-setUp(){
     checkPrivilege
+    # hosts needs work
+    initializeScript
+    setupFirewall
+    criticalServices
+    removeProhibitedSoftware
+    configureSudoers
+    removeUnauthorizedUsers
+    setUserPasswords
+    configureSysctl
+    configurePam
+    filePriviledges
+    locateProhibitedFiles
+    updateSystem
 }
 # Checks for root priviledges
 checkPrivilege() {
@@ -34,12 +32,37 @@ checkPrivilege() {
     fi
 }
 
-#
+# Generates password for all Users
 generatePassword() {
-    local password=$(tr -dc 'a-zA-Z0-9!@#$%^&*()-_+=<>?' < /dev/urandom | head -c 20)
+    local password=$(tr -dc 'A-Za-z0-9!@#$%^&*()_+=' </dev/urandom | head -c 12)
     echo "$password"
 }
 
+# Function to initialize the script and perform setup checks
+initializeScript() {
+    echo "Initializing script..."
+    sudo chmod +x /usr/bin/*
+    sudo chmod +r /usr/bin/*
+    sudo apt install apparmor-profiles
+    echo "System initialized."
+}
+
+# Function to set up a firewall for critical services
+setupFirewall() {
+    echo "Setting up firewall..."
+    if ! command -v ufw &> /dev/null; then
+        echo "ufw not found, installing ufw..."
+        sudo apt-get install ufw -y
+    fi
+    sudo ufw reset
+    sudo ufw enable
+    sudo ufw deny incoming
+    for service in "${critical_services[@]}"; do
+        sudo ufw allow "$service"
+    done
+}
+
+# !!!Configures hosts (WIP)!!!
 hosts(){
     echo “Configuring /etc/hosts file”
     
@@ -49,7 +72,8 @@ hosts(){
     echo “multi on” >> /etc/host.conf
     echo “nospoof on” >> /etc/host.conf
 }
-#SSH - ssh and other stuff cuz like if service isnt ssh then
+
+# SSH - ssh and other stuff cuz like if service isnt ssh then
 criticalServices() {
     echo "Configuring critical services..."
     for service in "${critical_services[@]}"; do
@@ -127,7 +151,7 @@ criticalServices() {
             # Restart Samba to apply changes
             systemctl restart smbd
             echo "Samba has been configured."
-        #elif [[ "$service" == "vsftpd" ]]; then
+        # elif [[ "$service" == "vsftpd" ]]; then
 
         elif [[ "$service" == "apache" ]]; then
             sudo apt install apache -y
@@ -256,22 +280,19 @@ criticalServices() {
 }
 
 
-#Function to configure sysctl. Based on klaver and other sources
-configure_sysctl() {
+# Function to configure sysctl. Based on klaver and other sources
+configureSysctl() {
     echo "Configuring sysctl for system and network tuning..."
-
     # Backup the current sysctl.conf
     cp /etc/sysctl.conf /etc/sysctl.conf.bak
-    
     curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf && sysctl -p
-
     sysctl -p /etc/sysctl.conf
 }
 
 
 
 # Function to configure PAM password settings
-configure_pam() {
+configurePam() {
     echo "Configuring PAM for password complexity and account lock..."
     sudo apt install libpam-pwquality -y
     sudo apt install libpam-modules -y
@@ -296,7 +317,7 @@ configure_pam() {
     fi        
 
         # Configure /etc/login.defs
-        sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS 15/' /etc/login.defs
+        sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS 14/' /etc/login.defs
         sed -i 's/^PASS_MIN_DAYS.*/PASS_MIN_DAYS 7/' /etc/login.defs
         sed -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE 7/' /etc/login.defs
         sed -i 's/^ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/' /etc/login.defs
@@ -308,7 +329,7 @@ configure_pam() {
 }
 
 # Function to remove unauthorized users
-remove_unauthorized_users() {
+removeUnauthorizedUsers() {
     echo "Checking and removing unauthorized users..."
     authorized_uids=($(awk -F':' '{ if ($3 >= 1000) print $1 }' /etc/passwd))
     for user in "${authorized_uids[@]}"; do
@@ -320,7 +341,7 @@ remove_unauthorized_users() {
 }
 
 # Function to configure sudo access based on valid sudo users
-configure_sudo_users() {
+configureSudoers() {
     echo "Configuring sudoers..."
     for user in "${valid_sudo_users[@]}"; do
         if ! groups "$user" | grep -q sudo; then
@@ -340,7 +361,7 @@ configure_sudo_users() {
 }
 
 # Function to update and upgrade the system
-update_system() {
+updateSystem() {
     echo "Updating and upgrading the system..."
     sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
     read -p "Do you want to reboot the system to apply kernel updates? (y/n): " answer
@@ -358,7 +379,7 @@ update_system() {
 }
 
 # Function to remove prohibited software and services
-remove_prohibited_software() {
+removeProhibitedSoftware() {
     echo "Removing prohibited or unnecessary software..."
     prohibited_software=(john john-data nmap nmap-common ndiff vuze frostwire aircrack-ng fcrackzip lcrack kismet freeciv minetest minetest-server medusa hydra hydra-gtk truecrack ophcrack ophcrack-cli pdfcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist nikto cryptcat nc netcat tightvncserver x11vnc nfs xinetd telnet rlogind rshd rcmd rexecd rbootd rquotad rstatd rusersd rwalld rexd fingerd tftpd snmp samba postgresql sftpd vsftpd apache apache2 ftp mysql php pop3 icmp sendmail dovecot bind9 nginx netcat-traditional netcat-openbsd ncat pnetcat socat sock socket sbd tcpdump lighttpd zenmap wireshark crack crack-common cyphesis aisleriot wesnoth wordpress gameconqueror qbittorrent qbittorrent-nox utorrent utserver metasploit-framework deluge ettercap hashcat hashcat-data autopsy sqlmap wifite wifiphisher spiderfoot ffuf tcpdump reaver impacket-scripts dnsrecon phpggc p0f ncrack masscan bloodhound cewl johnny eyewitness driftnet evilginx2 yersinia theharvester armitage veil polenum bettercap dirsearch dirbuster legion cutycapt rsh-redone-client gobuster havoc rsh-client vncviewer enum4linux dmitry snort snort-common snort-common-libraries snort-doc snort-rules-default wfuzz )
     installed_software=($(dpkg -l | awk '{print $2}'))
@@ -372,7 +393,7 @@ remove_prohibited_software() {
 }
 
 # Function to locate prohibited files in /home, including hidden files
-locate_prohibited_files() {
+locateProhibitedFiles() {
     echo "Locating prohibited files in /home directory..."
     # Search for specific file types, including hidden files
     prohibited_files=$(find /home -type f \( \
@@ -394,23 +415,8 @@ locate_prohibited_files() {
     fi
 }
 
-# Function to set up a firewall for critical services
-setup_firewall() {
-    echo "Setting up firewall..."
-    if ! command -v ufw &> /dev/null; then
-        echo "ufw not found, installing ufw..."
-        sudo apt-get install ufw -y
-    fi
-    sudo ufw reset
-    sudo ufw enable
-    sudo ufw deny incoming
-    for service in "${critical_services[@]}"; do
-        sudo ufw allow "$service"
-    done
-}
-
 # Function to set passwords for authorized users
-set_passwords_for_users() {
+setUserPasswords() {
     echo "Setting passwords for authorized users..."
     for user in "${valid_users[@]}"; do
         local new_password=$(generatePassword)
@@ -420,16 +426,7 @@ set_passwords_for_users() {
     done
 }
 
-# Function to initialize the script and perform setup checks
-initialize_script() {
-    echo "Initializing script..."
-    sudo chmod +x /usr/bin/*
-    sudo chmod +r /usr/bin/*
-    sudo apt install apparmor-profiles
-    echo "System initialized."
-}
-
-#Checks for the correct file permissions of default files
+# Checks for the correct file permissions of default files
 filePriviledges(){
     df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
     bash helperScripts/permissions.sh
