@@ -37,11 +37,6 @@ generatePassword() {
     echo "$password"
 }
 
-#DNS
-dns(){
-    service network-manager restart
-}
-
 hosts(){
     echo “Configuring /etc/hosts file”
     
