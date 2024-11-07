@@ -5,7 +5,6 @@ main(){
     setUp
     # hosts needs work
     initialize_script
-    update_system
     remove_prohibited_software
     setup_firewall
     configure_sudo_users
@@ -18,6 +17,7 @@ main(){
     check_and_repair_binary_poisoning
     remove_rootkits_malware
     locate_prohibited_files
+    update_system
 }
 # Setting up the system for script execution
 setUp(){
