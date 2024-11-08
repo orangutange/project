@@ -4,6 +4,7 @@ sudo apt install httpd -y
 systemctl start apache
 systemctl start apache2
 systemctl start httpd
+
 # Disable WebDAV, status, and UserDir modules (Ubuntu and Mint paths)
 sed -i '/LoadModule dav_module/s/^/#/' /etc/apache2/apache2.conf
 sed -i '/LoadModule dav_fs_module/s/^/#/' /etc/apache2/apache2.conf
@@ -114,6 +115,9 @@ fi
 if command -v apparmor_status &> /dev/null && apparmor_status | grep -q 'enabled'; then
     aa-enforce /etc/apparmor.d/usr.sbin.apache2
 fi
+
+#chown for permissions to all files
+chown -R root:root /etc/apache2
 
 # Reload Apache to apply changes
 systemctl reload apache2
