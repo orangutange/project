@@ -40,6 +40,15 @@ echo "server signing = mandatory" >> $smb_conf
 # Disable the banner
 echo "server string = " >> $smb_conf
 
+echo "Type all user account names, with a space in between"
+read -a usersSMB
+usersSMBLength=${#usersSMB[@]}	
+for (( i=0; i < $usersSMBLength; i++ ))
+do
+    echo -e "$password\n$password" | smbpasswd -a "${usersSMB[i]}"
+    printTime "${usersSMB[i]} has been given the password set in the variable for Samba."
+done
+
 # Restart Samba to apply changes
 systemctl restart smbd
 echo "Samba has been configured."
