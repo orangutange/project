@@ -249,10 +249,10 @@ filePriviledges(){
     bash helperScripts/permissions.sh
 }
 
-# Prompt for user input
-read -p "Enter the critical services (separated by space): " -a critical_services
-read -p "Enter the valid users from the README (separated by space): " -a valid_users
-read -p "Enter the valid sudo users (separated by space): " -a valid_sudo_users
+# Read the contents of the files into arrays
+critical_services=($(<helperScripts/authorizedcriticalservices.txt))
+valid_users=($(<helperScripts/authorizedusers.txt))
+valid_sudo_users=($(<helperScripts/authorizedsudousers.txt))
 
 # Define valid software (critical services)
 valid_software=("${critical_services[@]}")
