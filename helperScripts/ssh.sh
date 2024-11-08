@@ -1,6 +1,7 @@
 echo "Configuring OpenSSH..."
+apt install -y ssh 
 apt-get install -y libpam-google-authenticator
-#systemctl start ssh
+systemctl start ssh
 sudo sed -i 's/^#Protocol.*/Protocol 2/' /etc/ssh/sshd_config
 sudo sed -i 's/^#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
 sudo sed -i 's/^#MaxAuthTries.*/MaxAuthTries 3/' /etc/ssh/sshd_config
