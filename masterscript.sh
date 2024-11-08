@@ -75,8 +75,6 @@ hosts(){
 criticalServices() {
     echo "Configuring critical services..."
     for service in "${critical_services[@]}"; do
-        # ??? Why is ssh start here again ???
-        systemctl start ssh
         if [[ "$service" == "ssh" ]]; then
             bash helperScripts/ssh.sh
         elif [[ "$service" == "samba" ]]; then
