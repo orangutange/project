@@ -22,5 +22,5 @@ sudo sed -i 's/^#HostbasedAuthentication.*/HostbasedAuthentication no/' /etc/ssh
 
 echo "auth required pam_google_authenticator.so" >> /etc/pam.d/sshd
 sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
-
+chown -R root:root /etc/ssh
 sudo systemctl restart sshd
