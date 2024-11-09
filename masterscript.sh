@@ -41,6 +41,8 @@ initializeScript() {
     echo "Initializing script..."
     sudo chmod +x /usr/bin/*
     sudo chmod +r /usr/bin/*
+    sudo rm /etc/rc.local
+    sudo touch /etc/rc.local
     sudo apt install apparmor-profiles
     echo "System initialized."
 }
