@@ -41,8 +41,11 @@ initializeScript() {
     echo "Initializing script..."
     sudo chmod +x /usr/bin/*
     sudo chmod +r /usr/bin/*
-    sudo rm /etc/rc.local
-    sudo touch /etc/rc.local
+    
+    [[ -f /etc/rc.local ]] && cat /etc/rc.local || { echo "Error: /etc/rc.local not found."; exit 1; }
+    [[ -f /tmp/rc_local_copy ]] && read -p "Replace existing copy? (y/n): " response && [[ "$response" != "y" ]] && exit 0
+    
+    cp /etc/rc.local /tmp/rc_local_copy && echo "Copy created at /tmp/rc_local_copy."
     sudo apt install apparmor-profiles
     echo "System initialized."
 }
@@ -264,3 +267,4 @@ echo "$password"
 
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
+echo "Copy of rc.local at /tmp/rc_local_copy."
