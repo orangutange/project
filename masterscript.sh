@@ -210,6 +210,7 @@ removeProhibitedSoftware() {
             sudo apt-get remove --purge -y "$software"
         fi
     done
+    sudo apt autoremove
 }
 
 # Function to locate prohibited files in /home, including hidden files
