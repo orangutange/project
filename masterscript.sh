@@ -205,12 +205,12 @@ removeProhibitedSoftware() {
     installed_software=($(dpkg -l | awk '{print $2}'))
 
     for software in "${installed_software[@]}"; do
-        if ! [[ "${valid_software[@]}" =~ "$software" ]] && [[ "${prohibited_software[@]}" =~ "$software" ]]; then
+        if [[ " ${prohibited_software[@]} " =~ " ${software} " ]] && ! [[ " ${valid_software[@]} " =~ " ${software} " ]]; then
             echo "Removing $software..."
             sudo apt-get remove --purge -y "$software"
         fi
     done
-    sudo apt autoremove
+    sudo apt autoremove -y
 }
 
 # Function to locate prohibited files in /home, including hidden files
