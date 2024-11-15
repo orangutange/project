@@ -59,7 +59,7 @@ setupFirewall() {
     fi
     sudo ufw reset
     sudo ufw enable
-    sudo ufw deny incoming
+    sudo ufw default deny incoming
     for service in "${critical_services[@]}"; do
         sudo ufw allow "$service"
     done
