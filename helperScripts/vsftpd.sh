@@ -1,7 +1,7 @@
 # ok i added some i will add more when vsftpd comes in adv linux
 
 # Install vsftpd
-apt install vsftpd
+apt install vsftpd -y
 
 # Start and enable vsftpd service
 systemctl start vsftpd
