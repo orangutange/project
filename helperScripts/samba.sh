@@ -50,5 +50,5 @@ do
 done
 
 # Restart Samba to apply changes
-systemctl restart smbd
+systemctl reload smbd
 echo "Samba has been configured."
