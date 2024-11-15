@@ -227,7 +227,9 @@ locateProhibitedFiles() {
         -name ".*.avi" -o -name ".*.gif" -o -name ".*.jpg" -o -name ".*.png" -o \
         -name ".*.bmp" -o -name ".*.img" -o -name ".*.exe" -o -name ".*.msi" -o \
         -name ".*.bat" -o -name ".*.sh" -o -name ".*.so" -o -name "*.php" -o -name ".*.php" \) 2>/dev/null)
-
+    
+    echo "$prohibited_files" >> /tmp/prohibited.txt
+    
     if [ -n "$prohibited_files" ]; then
         echo "Prohibited files found:"
         echo "$prohibited_files"
@@ -269,3 +271,4 @@ echo "$password"
 echo "All tasks completed."
 echo "Passwords have been saved to /tmp/passwords.txt."
 echo "Copy of rc.local at /tmp/rc_local_copy."
+echo "Prohibited files saved to /tmp/prohibited.txt"
