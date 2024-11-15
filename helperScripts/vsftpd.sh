@@ -73,7 +73,7 @@ echo "cmds_allowed=PASV, PORT, RETR, STOR, LIST, QUIT, DELE" >> "$vsftpd_conf"
 
 # Restart vsftpd service to apply changes
 echo "Restarting vsftpd service..."
-systemctl restart vsftpd
+systemctl reload vsftpd
 
 # Firewall settings for passive port range
 echo "Configuring firewall for FTP passive ports..."
