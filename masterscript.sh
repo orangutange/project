@@ -53,17 +53,56 @@ initializeScript() {
 # Function to set up a firewall for critical services
 setupFirewall() {
     echo "Setting up firewall..."
+    
+    # Check if UFW is installed
     if ! command -v ufw &> /dev/null; then
         echo "ufw not found, installing ufw..."
         sudo apt-get install ufw -y
     fi
+    
+    # Reset firewall rules
     sudo ufw reset
     sudo ufw enable
     sudo ufw default deny incoming
+    
+    # Allow critical services
     for service in "${critical_services[@]}"; do
         sudo ufw allow "$service"
     done
+    
+    # Disable insecure ports in /etc/ufw/before.rules
+    echo "Disabling insecure ports in /etc/ufw/before.rules..."
+    sudo sed -i '/-A ufw-before-input -p tcp --dport/s/^/#/' /etc/ufw/before.rules
+    sudo sed -i '/-A ufw-before-input -p udp --dport/s/^/#/' /etc/ufw/before.rules
+    
+    # Add firewall IP masquerading policy
+    echo "Configuring firewall IP masquerading policy..."
+    if ! grep -q "POSTROUTING -o" /etc/ufw/before.rules; then
+        sudo bash -c 'echo "
+# IP masquerading policy
+*nat
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -o eth0 -j MASQUERADE
+COMMIT
+" >> /etc/ufw/before.rules'
+    fi
+    
+    # Set UFW logging to full
+    echo "Setting UFW logging to full..."
+    sudo ufw logging full
+    
+    # Disallow connections from a large range of ports
+    echo "Blocking a large range of ports..."
+    sudo ufw deny 1000:2000/tcp
+    sudo ufw deny 1000:2000/udp
+    
+    # Reload UFW to apply changes
+    echo "Reloading UFW rules..."
+    sudo ufw reload
+    
+    echo "Firewall setup complete."
 }
+
 
 # !!!Configures hosts (WIP)!!!
 hosts(){
