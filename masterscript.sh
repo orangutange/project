@@ -46,7 +46,7 @@ initializeScript() {
     #[[ -f /tmp/rc_local_copy ]] && read -p "Replace existing copy? (y/n): " response && [[ "$response" != "y" ]] && exit 0
     
     #cp /etc/rc.local /tmp/rc_local_copy && echo "Copy created at /tmp/rc_local_copy."
-    sudo apt install apparmor-profiles -y
+    sudo apt install apparmor-profiles libpam-pwquality libpam-modules -y
     systemctl enable apparmor
     systemctl start apparmor
     echo "System initialized."
@@ -138,8 +138,6 @@ configureSysctl() {
 # Function to configure PAM password settings
 configurePam() {
     echo "Configuring PAM for password complexity and account lock..."
-    sudo apt install libpam-pwquality -y
-    sudo apt install libpam-modules -y
     
 # /etc/pam.d/common-auth
     if ! grep -q "pam_faillock.so" /etc/pam.d/common-auth; then
