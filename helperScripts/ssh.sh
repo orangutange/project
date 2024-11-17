@@ -4,7 +4,7 @@ echo "Configuring OpenSSH..."
 
 # Install required packages
 apt install ssh -y
-apt install -y openssh-server libpam-google-authenticator
+apt install -y openssh-server
 
 # Ensure SSH service is started
 systemctl enable ssh
