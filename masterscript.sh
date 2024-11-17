@@ -140,6 +140,7 @@ configureSysctl() {
     # Backup the current sysctl.conf
     cp /etc/sysctl.conf /etc/sysctl.conf.bak
     curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf && sysctl -p
+    cat helperScripts/additionalsysctlconfigs.txt >> /etc/sysctl.conf
     sysctl -p /etc/sysctl.conf
 }
 
