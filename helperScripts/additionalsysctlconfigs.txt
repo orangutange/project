@@ -1,0 +1,46 @@
+net.ipv6.conf.default.router_solicitations = 0
+net.ipv6.conf.default.accept_ra_rtr_pref = 0
+net.ipv6.conf.default.accept_ra_pinfo = 0
+net.ipv6.conf.default.accept_ra_defrtr = 0
+net.ipv6.conf.default.autoconf = 0
+net.ipv6.conf.default.dad_transmits = 0
+net.ipv6.conf.default.max_addresses = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.all.disable_ipv6 = 1
+# Disable IPv4 protocol features that could be exploited
+net.ipv4.conf.all.accept_local = 0
+net.ipv4.conf.default.accept_local = 0
+net.ipv4.conf.all.route_localnet = 0
+net.ipv4.conf.default.route_localnet = 0  
+# Protect against time-wait assassination
+net.ipv4.tcp_challenge_ack_limit = 1000000
+# Disable SACK (Selective ACK) to prevent potential DoS vectors
+net.ipv4.tcp_sack = 0
+net.ipv4.tcp_dsack = 0
+net.ipv4.tcp_fack = 0
+# Enhanced ARP security
+net.ipv4.conf.all.arp_ignore = 1
+net.ipv4.conf.default.arp_ignore = 1
+net.ipv4.conf.all.arp_announce = 2
+net.ipv4.conf.default.arp_announce = 2
+net.ipv4.conf.all.arp_filter = 1
+net.ipv4.conf.default.arp_filter = 1
+# Restrict dmesg access to root only
+kernel.dmesg_restrict = 1
+# Restrict access to kernel logs
+kernel.printk = 3 3 3 3
+# Disable kernel profiling by unprivileged users
+kernel.perf_event_paranoid = 3
+# Enable BPF JIT hardening
+net.core.bpf_jit_harden = 2
+# Disable memory mapping through proc
+kernel.kexec_load_disabled = 1
+# Protect against user namespace abuse
+kernel.unprivileged_userns_clone = 0
+# Increase connection tracking table size
+net.netfilter.nf_conntrack_max = 2000000
+net.netfilter.nf_conntrack_tcp_loose = 0
+
+net.ipv4.tcp_invalid_ratelimit = 500
+net.ipv4.tcp_mem = 786432 1048576 1572864
