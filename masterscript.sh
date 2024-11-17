@@ -13,7 +13,7 @@ main(){
     setupFirewall
     criticalServices
     removeProhibitedSoftware
-    configureSudoers
+    configureSudousers
     removeUnauthorizedUsers
     setUserPasswords
     configureSysctl
@@ -190,8 +190,8 @@ removeUnauthorizedUsers() {
 }
 
 # Function to configure sudo access based on valid sudo users
-configureSudoers() {
-    echo "Configuring sudoers..."
+configureSudousers() {
+    echo "Configuring sudo users..."
     for user in "${valid_sudo_users[@]}"; do
         if ! groups "$user" | grep -q sudo; then
             echo "Adding $user to sudo group"
@@ -200,8 +200,8 @@ configureSudoers() {
     done
 
     # Remove users who shouldn't have sudo
-    current_sudoers=($(getent group sudo | awk -F: '{print $4}' | tr ',' ' '))
-    for sudoer in "${current_sudoers[@]}"; do
+    current_sudousers=($(getent group sudo | awk -F: '{print $4}' | tr ',' ' '))
+    for sudoer in "${current_sudousers[@]}"; do
         if ! [[ "${valid_sudo_users[@]}" =~ "$sudoer" ]]; then
             echo "Removing $sudoer from sudo group"
             sudo deluser "$sudoer" sudo
