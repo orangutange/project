@@ -128,7 +128,7 @@ configureSysctl() {
     echo "Configuring sysctl for system and network tuning..."
     # Backup the current sysctl.conf
     cp /etc/sysctl.conf /etc/sysctl.conf.bak
-    curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf && sysctl -p
+    curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf
     cat helperScripts/additionalsysctlconfigs.txt >> /etc/sysctl.conf
     sysctl -p /etc/sysctl.conf
 }
