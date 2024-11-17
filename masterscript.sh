@@ -46,7 +46,9 @@ initializeScript() {
     #[[ -f /tmp/rc_local_copy ]] && read -p "Replace existing copy? (y/n): " response && [[ "$response" != "y" ]] && exit 0
     
     #cp /etc/rc.local /tmp/rc_local_copy && echo "Copy created at /tmp/rc_local_copy."
-    sudo apt install apparmor-profiles
+    sudo apt install apparmor-profiles -y
+    systemctl enable apparmor
+    systemctl start apparmor
     echo "System initialized."
 }
 
@@ -57,11 +59,17 @@ setupFirewall() {
         echo "ufw not found, installing ufw..."
         sudo apt-get install ufw -y
     fi
-    sudo ufw reset
+    sudo ufw reset -y
     sudo ufw enable
     sudo ufw logging full
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
+    sudo ufw deny 23
+    sudo ufw deny 69
+    sudo ufw deny 445
+    sudo ufw deny 137
+    sudo ufw deny 139
+    sudo ufw deny 2049
     for service in "${critical_services[@]}"; do
         sudo ufw allow "$service"
     done
