@@ -46,7 +46,7 @@ initializeScript() {
     #[[ -f /tmp/rc_local_copy ]] && read -p "Replace existing copy? (y/n): " response && [[ "$response" != "y" ]] && exit 0
     
     #cp /etc/rc.local /tmp/rc_local_copy && echo "Copy created at /tmp/rc_local_copy."
-    sudo apt install apparmor-profiles libpam-pwquality libpam-modules -y
+    sudo apt install apparmor-profiles libpam-pwquality libpam-modules wget -y
     systemctl enable apparmor
     systemctl start apparmor
     echo "System initialized."
@@ -128,7 +128,7 @@ configureSysctl() {
     echo "Configuring sysctl for system and network tuning..."
     # Backup the current sysctl.conf
     cp /etc/sysctl.conf /etc/sysctl.conf.bak
-    curl -s https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf -o /etc/sysctl.conf
+    wget -qO- https://raw.githubusercontent.com/klaver/sysctl/refs/heads/master/sysctl.conf > /etc/sysctl.conf
     cat helperScripts/additionalsysctlconfigs.txt >> /etc/sysctl.conf
     sysctl -p /etc/sysctl.conf
 }
