@@ -8,7 +8,6 @@
 # EUREKA!!! POINTS!!!
 main(){
     checkPrivilege
-    # hosts needs work
     initializeScript
     setupFirewall
     criticalServices
@@ -90,18 +89,6 @@ COMMIT
 EOF
     "    
     sudo ufw reload
-}
-
-
-# !!!Configures hosts (WIP)!!!
-hosts(){
-    echo “Configuring /etc/hosts file”
-    
-    echo “ALL:ALL” > /etc/hosts.deny
-    echo “sshd:ALL” > /etc/hosts.allow
-    echo “order hosts, bind” > /etc/host.conf
-    echo “multi on” >> /etc/host.conf
-    echo “nospoof on” >> /etc/host.conf
 }
 
 # Critical Services Configurations
