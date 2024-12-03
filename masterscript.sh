@@ -225,6 +225,7 @@ removeProhibitedSoftware() {
         fi
     done
     sudo apt autoremove -y
+    sudo apt autoclean -y
 }
 
 # Function to locate prohibited files in /home, including hidden files
