@@ -10,6 +10,8 @@ ufw allow netbios-ssn
 ufw allow microsoft-ds
 ufw allow 445
 
+# DOESNT ADD UNDER GLOBAL SECTION
+
 # Add the required configurations to the Samba global section
 echo "disable netbios = Yes" >> $smb_conf
 echo "smb ports = 445" >> $smb_conf
@@ -35,6 +37,8 @@ echo "min protocol = SMB3" >> $smb_conf
 echo "server min protocol = SMB3" >> $smb_conf
 echo "client min protocol = SMB3" >> $smb_conf
 echo "client max protocol = SMB3" >> $smb_conf
+echo "ntlm auth = yes" >> $smb_conf
+echo "lanman auth = no" >> $smb_conf
 # can change to SMB3 if doesn't give points
 echo "client signing = mandatory" >> $smb_conf
 echo "server signing = mandatory" >> $smb_conf
@@ -43,6 +47,8 @@ echo "smb encrypt = mandatory" >> $smb_conf
 
 # Disable the banner
 echo "server string = " >> $smb_conf
+
+# CHANGE LATER
 
 echo "Type all user account names, with a space in between"
 read -a usersSMB
