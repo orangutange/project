@@ -63,31 +63,9 @@ setupFirewall() {
     sudo ufw logging full
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
-    sudo ufw deny 23
-    sudo ufw deny 69
-    sudo ufw deny 445
-    sudo ufw deny 137
-    sudo ufw deny 139
-    sudo ufw deny 2049
     for service in "${critical_services[@]}"; do
         sudo ufw allow "$service"
     done
-    # Configure IP masquerading
-    echo "Configuring IP masquerading policy..."
-    # Ensure `before.rules` exists in the UFW directory
-    before_rules="/etc/ufw/before.rules"
-    if [ -f "$before_rules" ]; then
-        sudo cp "$before_rules" "$before_rules.bak"  # Backup the original file
-    fi
-
-    sudo bash -c "cat << 'EOF' > $before_rules
-# Allow IP masquerading
-*nat
-:POSTROUTING ACCEPT [0:0]
--A POSTROUTING -s 10.0.0.0/8 -o eth0 -j MASQUERADE
-COMMIT
-EOF
-    "    
     sudo ufw reload
 }
 
