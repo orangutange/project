@@ -117,6 +117,7 @@ chown root:root /usr
 chown root:root /var/
 chmod 600 /etc/shadow
 chmod 640 ~/.bash_history
+chmod 0755 /bin/bash
 
 # Additional files and directories to secure
 chmod 600 /etc/gshadow
