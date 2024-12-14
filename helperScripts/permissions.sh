@@ -115,6 +115,7 @@ chown root:root /sys
 chown root:root /tmp
 chown root:root /usr
 chown root:root /var/
+chown -R root:root /etc/apache2
 chmod 600 /etc/shadow
 chmod 640 ~/.bash_history
 chmod 0755 /bin/bash
